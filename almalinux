@@ -1,1 +1,41 @@
+sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/'g /etc/ssh/sshd_config
+service sshd restart
+
+sudo service ssh restart
+
+userdel debian
+rm -rf /home/debian
+
+
+echo "net.ipv6.conf.all.disable_ipv6 = 0" >> /etc/sysctl.conf 
+echo "net.ipv6.conf.default.disable_ipv6 = 0" >> /etc/sysctl.conf 
+echo "net.ipv6.conf.lo.disable_ipv6 = 0" >> /etc/sysctl.conf
+sysctl -p
+
+echo "net.ipv6.conf.all.disable_ipv6 = 0" >> /etc/sysctl.conf
+echo "net.ipv6.conf.default.disable_ipv6 = 0" >> /etc/sysctl.conf
+sysctl -p
+
+cat /proc/sys/net/ipv6/conf/all/disable_ipv6
+
+apt-get update -y 
+apt-get upgrade -y 
+apt-get dist-upgrade -y
+apt-get autoremove 
+
+sed -i 's/name: debian/name: root/g' /etc/cloud/cloud.cfg
+
+
+#cloud-config
+password: 'htv@2023'
+chpasswd: { expire: False }
+ssh_pwauth: True
+
+hw_qemu_guest_agent
+hw_cpu_sockets
+hw_cpu_max_sockets
+
+virt-sparsify --compress almalinux8-clone-2.qcow2 almalinux8GUI.img
+qemu-img convert almalinux8GUI.img almalinux8GUI.raw
+
 
